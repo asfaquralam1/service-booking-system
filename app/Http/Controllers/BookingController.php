@@ -45,9 +45,6 @@ class BookingController extends Controller
         return response()->json($created, 201);
     }
 
-
-
-
     public function userBookings()
     {
         return response()->json($this->booking->getUserBookings(Auth::id()));

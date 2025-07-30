@@ -16,6 +16,7 @@ class BookingService
 
     public function store(array $data)
     {
+        // Check for duplicate booking (same user, service, date)
         if ($this->repository->isDuplicate(
             $data['user_id'],
             $data['service_id'],
@@ -24,7 +25,10 @@ class BookingService
             return ['error' => 'You have already booked this service on this date.'];
         }
 
+        // Set default status
         $data['status'] = 'pending';
+
+        // Create and return booking
         return $this->repository->create($data);
     }
 
