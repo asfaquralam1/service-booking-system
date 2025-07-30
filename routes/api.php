@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,11 +29,14 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
    // Customer Routes
     Route::get('/services', [ServiceController::class, 'index']);
+    Route::post('/bookings', [BookingController::class, 'store']);
+    Route::get('/bookings', [BookingController::class, 'userBookings']);
 
     // Admin Routes
     Route::middleware('admin')->group(function () {
         Route::post('/services', [ServiceController::class, 'store']);
         Route::put('/services/{id}', [ServiceController::class, 'update']);
         Route::delete('/services/{id}', [ServiceController::class, 'destroy']);
+        Route::get('/admin/bookings', [BookingController::class, 'allBookings']);
     });
 });
