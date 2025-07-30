@@ -3,28 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BookingRequest;
-use App\Models\Booking;
-use Illuminate\Http\Request;
+use App\Services\BookingService;
 use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
 {
-    public function store(BookingRequest $request){
-        $booking = Booking::create([
-            'user_id' => Auth::id(),
-            'service_id' => $request->service_id,
-            'booking_date' => $request->booking_date,
-            'status' => 'pending',
+    protected $booking;
+
+    public function __construct(BookingService $booking)
+    {
+        $this->booking = $booking;
+    }
+
+    public function store(BookingRequest $request)
+    {
+        $data = $request->validated();
+        $data['user_id'] = Auth::id();
+
+        $created = $this->booking->store($data);
+
+        return response()->json($created, 201);
+    }
+
+    public function userBookings()
+    {
+        return response()->json($this->booking->getUserBookings(Auth::id()));
+    }
+
+    public function allBookings()
+    {
+        return response()->json($this->booking->getAllBookings());
+    }
+
+    public function destroy($id)
+    {
+        $booking = $this->booking->find($id);
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found.'], 404);
+        }
+        $this->booking->destroy($booking);
+
+        return response()->json([
+            'message' => 'Booking deleted successfully.'
         ]);
-
-        return response()->json($booking,201);
-    }
-
-    public function userBookings(){
-        return response()->json(Auth::user()->bookings);
-    }
-
-    public function allBookings()  {
-        return response()->json(Booking::with('user','service')->get());
     }
 }

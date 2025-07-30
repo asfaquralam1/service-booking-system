@@ -10,12 +10,11 @@ class ServiceRepository
     {
         return Service::where('status', true)->get();
     }
-
-    public function existsByName(string $name): bool
+    public function findByName(string $name)
     {
-        return Service::where('name', $name)->exists();
+        return \App\Models\Service::where('name', $name)->first();
     }
-
+    
     public function create(array $data)
     {
         return Service::create($data);

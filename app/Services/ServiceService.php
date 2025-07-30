@@ -19,11 +19,13 @@ class ServiceService
         return $this->repository->allActive();
     }
 
+    public function findByName(string $name)
+    {
+        return $this->repository->findByName($name);
+    }
+
     public function store(array $data)
     {
-        if ($this->repository->existsByName($data['name'])) {
-            throw new \Exception('A service with this name already exists.');
-        }
         return $this->repository->create($data);
     }
 
