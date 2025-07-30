@@ -11,6 +11,14 @@ class BookingRepository
         return Booking::create($data);
     }
 
+    public function isDuplicate($userId, $serviceId, $bookingDate)
+    {
+        return Booking::where('user_id', $userId)
+            ->where('service_id', $serviceId)
+            ->whereDate('booking_date', $bookingDate)
+            ->exists();
+    }
+
     public function getByUser($userId)
     {
         return Booking::with('service')

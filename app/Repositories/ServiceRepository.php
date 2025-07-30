@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Booking;
 use App\Models\Service;
 
 class ServiceRepository
@@ -10,11 +11,12 @@ class ServiceRepository
     {
         return Service::where('status', true)->get();
     }
+
     public function findByName(string $name)
     {
-        return \App\Models\Service::where('name', $name)->first();
+        return Service::where('name', $name)->first();
     }
-    
+
     public function create(array $data)
     {
         return Service::create($data);
