@@ -26,5 +26,13 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
+   // Customer Routes
     Route::get('/services', [ServiceController::class, 'index']);
+
+    // Admin Routes
+    Route::middleware('admin')->group(function () {
+        Route::post('/services', [ServiceController::class, 'store']);
+        Route::put('/services/{id}', [ServiceController::class, 'update']);
+        Route::delete('/services/{id}', [ServiceController::class, 'destroy']);
+    });
 });
