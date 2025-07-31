@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BookingRequest;
 use App\Services\BookingService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
@@ -16,24 +17,16 @@ class BookingController extends Controller
         $this->booking = $booking;
     }
 
-
     public function store(BookingRequest $request)
     {
         $data = $request->validated();
         $data['user_id'] = Auth::id();
 
-        try {
-            $bookingDate = Carbon::createFromFormat('Y-m-d', $data['booking_date']);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Invalid date format.'], 422);
-        }
+        $dateToCheck = Carbon::parse($request->booking_date);
+        $today = Carbon::today();
 
-        if ($bookingDate->isBefore(Carbon::today())) {
-            return response()->json([
-                'message' => 'You cannot book a service in the past.',
-                'booking_date' => $bookingDate->toDateString(),
-                'today' => Carbon::today()->toDateString(),
-            ], 422);
+        if ($dateToCheck->lt($today)) {
+            return response()->json(['message' => 'You cannot book a service in the past.'], 422);
         }
 
         $created = $this->booking->store($data);
@@ -41,7 +34,6 @@ class BookingController extends Controller
         if (isset($created['error'])) {
             return response()->json(['message' => $created['error']], 409);
         }
-
         return response()->json($created, 201);
     }
 

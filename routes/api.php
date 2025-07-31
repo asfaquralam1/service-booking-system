@@ -29,7 +29,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
    // Customer Routes
     Route::get('/services', [ServiceController::class, 'index']);
-    Route::post('/bookings', [BookingController::class, 'store']);
+    Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
+    // Route::post('/bookings', function(){return('hi');})->name('bookings.store');
     Route::get('/bookings', [BookingController::class, 'userBookings']);
 
     // Admin Routes

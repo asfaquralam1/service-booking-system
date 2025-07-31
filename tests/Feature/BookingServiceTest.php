@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit;
 
 use Tests\TestCase;
@@ -70,21 +71,17 @@ class BookingServiceTest extends TestCase
         $this->assertEquals('You have already booked this service on this date.', $result['error']);
     }
 
-    public function test_it_rejects_past_date_booking_in_controller()
+    public function test_it_rejects_past_booking_date()
     {
         $user = User::factory()->create();
         $service = Service::factory()->create();
 
-        $pastDate = Carbon::yesterday()->format('Y-m-d');
-
         $response = $this->actingAs($user)->postJson(route('bookings.store'), [
             'service_id' => $service->id,
-            'booking_date' => $pastDate,
+            'booking_date' => now()->subDay()->toDateString(),
         ]);
 
         $response->assertStatus(422);
-        $response->assertJsonFragment([
-            'message' => 'The booking date must be a date after or equal to today.',
-        ]);
+        $response->assertJsonValidationErrors(['booking_date']);
     }
 }
